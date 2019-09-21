@@ -1,0 +1,15 @@
+{
+  "name": "echoer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Mathieu D'Amours",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "@grpc/proto-loader": "^0.5.2",
+    "grpc": "^1.23.3"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
