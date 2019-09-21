@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package cabane.io;
+
+message ReduceQuery {
+    int64 number = 1;
+}
+
+message ReduceResult {
+    string message = 1;
+}
+
+service Reducer {
+    rpc Ask(ReduceQuery) returns (ReduceResult);
+}

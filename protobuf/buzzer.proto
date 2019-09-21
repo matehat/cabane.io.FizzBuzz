@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package cabane.io;
+
+message BuzzQuery {
+    int64 number = 1;
+}
+
+message BuzzResponse {
+    bool isBuzz = 1;
+}
+
+service Buzz {
+    rpc Ask(BuzzQuery) returns (BuzzResponse);
+}

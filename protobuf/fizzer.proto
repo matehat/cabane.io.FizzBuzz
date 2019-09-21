@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package cabane.io;
+
+message FizzQuery {
+    int64 number = 1;
+}
+
+message FizzResponse {
+    bool isFizz = 1;
+}
+
+service Fizz {
+    rpc Ask(FizzQuery) returns (FizzResponse);
+}

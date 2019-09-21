@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package cabane.io;
+
+message EchoQuery {
+    int64 number = 1;
+}
+
+message EchoResponse {
+    string message = 1;
+}
+
+service Echo {
+    rpc Ask(EchoQuery) returns (EchoResponse);
+}
