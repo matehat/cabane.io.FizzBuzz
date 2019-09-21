@@ -1,1 +1,4 @@
 echoer/node_modules/
+frontend/deps/
+frontend/assets/node_modules/
+frontend/_build/
