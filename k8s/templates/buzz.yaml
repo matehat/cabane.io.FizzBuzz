@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fizzbuzz-buzz
+  labels:
+    app: fizzbuzz
+    version: {{ .Values.buzz.tag }}
+spec:
+  selector:
+    matchLabels:
+      tech: dart
+      app: fizzbuzz
+      protocol: grpc
+      name: fizzbuzz-buzz
+  replicas: {{ .Values.buzz.replicas }}
+  template:
+    metadata:
+      name: fizzbuzz-buzz
+      labels:
+        tech: dart
+        app: fizzbuzz
+        protocol: grpc
+        name: fizzbuzz-buzz
+        version: {{ .Values.buzz.tag }}
+    spec:
+      containers:
+      - name: fizzbuzz-buzz
+        imagePullPolicy: Always
+        image: matehat/fizzbuzz-fizzbuzz:{{ .Values.buzz.tag }}
+        args:
+          - "buzz"
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "300m"
+        ports:
+          - containerPort: 50051
+            name: grpc
+        env:
+          - name: BUZZ_SERVICE_HOST
+            value: 0.0.0.0
+          - name: BUZZ_SERVICE_PORT
+            value: "50051"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fizzbuzz-buzz
+  labels:
+    app: fizzbuzz
+spec:
+  ports:
+  - port: 50051
+    name: grpc
+  type: ClusterIP
+  selector:
+    name: fizzbuzz-buzz

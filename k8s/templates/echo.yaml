@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fizzbuzz-echo
+  labels:
+    app: fizzbuzz
+    version: {{ .Values.echo.tag }}
+spec:
+  selector:
+    matchLabels:
+      tech: elixir
+      app: fizzbuzz
+      protocol: grpc
+      name: fizzbuzz-echo
+  replicas: {{ .Values.echo.replicas }}
+  template:
+    metadata:
+      name: fizzbuzz-echo
+      labels:
+        tech: elixir
+        app: fizzbuzz
+        protocol: grpc
+        name: fizzbuzz-echo
+        version: {{ .Values.echo.tag }}
+    spec:
+      containers:
+      - name: fizzbuzz-echo
+        imagePullPolicy: Always
+        image: matehat/fizzbuzz-echoer:{{ .Values.echo.tag }}
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "150m"
+        ports:
+          - containerPort: 50051
+            name: grpc
+        env:
+          - name: SERVICE_HOST
+            value: 0.0.0.0
+          - name: SERVICE_PORT
+            value: "50051"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fizzbuzz-echo
+  labels:
+    app: fizzbuzz
+spec:
+  ports:
+  - port: 50051
+    name: grpc
+  type: ClusterIP
+  selector:
+    name: fizzbuzz-echo

@@ -1,0 +1,369 @@
+---
+# Source: fizzbuzz/templates/buzz.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fizzbuzz-buzz
+  labels:
+    app: fizzbuzz
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      tech: dart
+      app: fizzbuzz
+      protocol: grpc
+      name: fizzbuzz-buzz
+  replicas: 1
+  template:
+    metadata:
+      name: fizzbuzz-buzz
+      labels:
+        tech: dart
+        app: fizzbuzz
+        protocol: grpc
+        name: fizzbuzz-buzz
+        version: v1
+    spec:
+      containers:
+        - name: fizzbuzz-buzz
+          imagePullPolicy: Always
+          image: matehat/fizzbuzz-fizzbuzz:v1
+          args:
+            - "buzz"
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
+          ports:
+            - containerPort: 50051
+              name: grpc
+          env:
+            - name: BUZZ_SERVICE_HOST
+              value: 0.0.0.0
+            - name: BUZZ_SERVICE_PORT
+              value: "50051"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fizzbuzz-buzz
+  labels:
+    app: fizzbuzz
+spec:
+  ports:
+    - port: 50051
+      name: grpc
+  type: ClusterIP
+  selector:
+    name: fizzbuzz-buzz
+
+---
+# Source: fizzbuzz/templates/echo.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fizzbuzz-echo
+  labels:
+    app: fizzbuzz
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      tech: elixir
+      app: fizzbuzz
+      protocol: grpc
+      name: fizzbuzz-echo
+  replicas: 2
+  template:
+    metadata:
+      name: fizzbuzz-echo
+      labels:
+        tech: elixir
+        app: fizzbuzz
+        protocol: grpc
+        name: fizzbuzz-echo
+        version: v1
+    spec:
+      containers:
+        - name: fizzbuzz-echo
+          imagePullPolicy: Always
+          image: matehat/fizzbuzz-echoer:v1
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "150m"
+          ports:
+            - containerPort: 50051
+              name: grpc
+          env:
+            - name: SERVICE_HOST
+              value: 0.0.0.0
+            - name: SERVICE_PORT
+              value: "50051"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fizzbuzz-echo
+  labels:
+    app: fizzbuzz
+spec:
+  ports:
+    - port: 50051
+      name: grpc
+  type: ClusterIP
+  selector:
+    name: fizzbuzz-echo
+
+---
+# Source: fizzbuzz/templates/fizzer.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fizzbuzz-fizz
+  labels:
+    app: fizzbuzz
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      tech: dart
+      app: fizzbuzz
+      protocol: grpc
+      name: fizzbuzz-fizz
+  replicas: 1
+  template:
+    metadata:
+      name: fizzbuzz-fizz
+      labels:
+        tech: dart
+        app: fizzbuzz
+        protocol: grpc
+        name: fizzbuzz-fizz
+        version: v1
+    spec:
+      containers:
+        - name: fizzbuzz-fizz
+          imagePullPolicy: Always
+          image: matehat/fizzbuzz-fizzbuzz:v1
+          args:
+            - "fizz"
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
+          ports:
+            - containerPort: 50051
+              name: grpc
+          env:
+            - name: FIZZ_SERVICE_HOST
+              value: 0.0.0.0
+            - name: FIZZ_SERVICE_PORT
+              value: "50051"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fizzbuzz-fizz
+  labels:
+    app: fizzbuzz
+spec:
+  ports:
+    - port: 50051
+      name: grpc
+  type: ClusterIP
+  selector:
+    name: fizzbuzz-fizz
+
+---
+# Source: fizzbuzz/templates/frontend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fizzbuzz-frontend-v1
+  labels:
+    app: fizzbuzz
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      tech: elixir
+      app: fizzbuzz
+      protocol: http
+      name: fizzbuzz-frontend
+  replicas: 1
+  template:
+    metadata:
+      name: fizzbuzz-frontend
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+      labels:
+        tech: elixir
+        app: fizzbuzz
+        protocol: http
+        name: fizzbuzz-frontend
+        version: v1
+    spec:
+      containers:
+        - name: fizzbuzz-frontend
+          imagePullPolicy: Always
+          image: matehat/fizzbuzz-frontend:v1
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "150m"
+          ports:
+            - containerPort: 4000
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          env:
+            - name: ECHO_SERVICE_HOST
+              value: fizzbuzz-echo
+            - name: ECHO_SERVICE_PORT
+              value: "50051"
+            - name: REDUCER_SERVICE_HOST
+              value: fizzbuzz-reducer
+            - name: REDUCER_SERVICE_PORT
+              value: "50051"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fizzbuzz-frontend-v2
+  labels:
+    app: fizzbuzz
+    version: v2
+spec:
+  selector:
+    matchLabels:
+      tech: elixir
+      app: fizzbuzz
+      protocol: http
+      name: fizzbuzz-frontend
+  replicas: 1
+  template:
+    metadata:
+      name: fizzbuzz-frontend
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+      labels:
+        tech: elixir
+        app: fizzbuzz
+        protocol: http
+        name: fizzbuzz-frontend
+        version: v2
+    spec:
+      containers:
+        - name: fizzbuzz-frontend
+          imagePullPolicy: Always
+          image: matehat/fizzbuzz-frontend:v2
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "150m"
+          ports:
+            - containerPort: 4000
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          env:
+            - name: ECHO_SERVICE_HOST
+              value: fizzbuzz-echo
+            - name: ECHO_SERVICE_PORT
+              value: "50051"
+            - name: REDUCER_SERVICE_HOST
+              value: fizzbuzz-reducer
+            - name: REDUCER_SERVICE_PORT
+              value: "50051"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fizzbuzz-frontend
+  labels:
+    app: fizzbuzz
+spec:
+  ports:
+    - port: 4000
+      name: http
+  type: NodePort
+  selector:
+    name: fizzbuzz-frontend
+
+---
+# Source: fizzbuzz/templates/reducer.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fizzbuzz-reducer
+  labels:
+    app: fizzbuzz
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      tech: python
+      app: fizzbuzz
+      protocol: grpc
+      name: fizzbuzz-reducer
+  replicas: 2
+  template:
+    metadata:
+      name: fizzbuzz-reducer
+      labels:
+        tech: python
+        app: fizzbuzz
+        protocol: grpc
+        name: fizzbuzz-reducer
+        version: v1
+    spec:
+      containers:
+        - name: fizzbuzz-reducer
+          imagePullPolicy: Always
+          image: matehat/fizzbuzz-reducer:v1
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "150m"
+          ports:
+            - containerPort: 50051
+              name: grpc
+          env:
+            - name: REDUCER_SERVICE_HOST
+              value: 0.0.0.0
+            - name: REDUCER_SERVICE_PORT
+              value: "50051"
+            - name: FIZZ_SERVICE_HOST
+              value: fizzbuzz-fizz
+            - name: FIZZ_SERVICE_PORT
+              value: "50051"
+            - name: BUZZ_SERVICE_HOST
+              value: fizzbuzz-buzz
+            - name: BUZZ_SERVICE_PORT
+              value: "50051"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fizzbuzz-reducer
+  labels:
+    app: fizzbuzz
+spec:
+  ports:
+    - port: 50051
+      name: grpc
+  type: ClusterIP
+  selector:
+    name: fizzbuzz-reducer

@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fizzbuzz-frontend
+  labels:
+    app: fizzbuzz
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      tech: elixir
+      app: fizzbuzz
+      protocol: http
+      name: fizzbuzz-frontend
+  replicas: 1
+  template:
+    metadata:
+      name: fizzbuzz-frontend
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+      labels:
+        tech: elixir
+        app: fizzbuzz
+        protocol: http
+        name: fizzbuzz-frontend
+        version: v1
+    spec:
+      containers:
+      - name: fizzbuzz-frontend
+        imagePullPolicy: Always
+        image: matehat/fizzbuzz-frontend:v1
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "150m"
+        ports:
+          - containerPort: 4000
+            name: http
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 4000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          
+        env:
+          - name: ECHO_SERVICE_HOST
+            value: fizzbuzz-echo
+          - name: ECHO_SERVICE_PORT
+            value: "50051"
+          - name: REDUCER_SERVICE_HOST
+            value: fizzbuzz-reducer
+          - name: REDUCER_SERVICE_PORT
+            value: "50051"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fizzbuzz-frontend
+  labels:
+    app: fizzbuzz
+    version: v2
+spec:
+  selector:
+    matchLabels:
+      tech: elixir
+      app: fizzbuzz
+      protocol: http
+      name: fizzbuzz-frontend
+  replicas: 1
+  template:
+    metadata:
+      name: fizzbuzz-frontend
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+      labels:
+        tech: elixir
+        app: fizzbuzz
+        protocol: http
+        name: fizzbuzz-frontend
+        version: v2
+    spec:
+      containers:
+      - name: fizzbuzz-frontend
+        imagePullPolicy: Always
+        image: matehat/fizzbuzz-frontend:v2
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "150m"
+        ports:
+          - containerPort: 4000
+            name: http
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 4000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          
+        env:
+          - name: ECHO_SERVICE_HOST
+            value: fizzbuzz-echo
+          - name: ECHO_SERVICE_PORT
+            value: "50051"
+          - name: REDUCER_SERVICE_HOST
+            value: fizzbuzz-reducer
+          - name: REDUCER_SERVICE_PORT
+            value: "50051"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fizzbuzz-frontend
+  labels:
+    app: fizzbuzz
+spec:
+  ports:
+  - port: 4000
+    name: http
+  type: NodePort
+  selector:
+    name: fizzbuzz-frontend

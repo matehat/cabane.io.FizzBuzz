@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fizzbuzz-reducer
+  labels:
+    app: fizzbuzz
+    version: {{ .Values.reducer.tag }}
+spec:
+  selector:
+    matchLabels:
+      tech: python
+      app: fizzbuzz
+      protocol: grpc
+      name: fizzbuzz-reducer
+  replicas: {{ .Values.reducer.replicas }}
+  template:
+    metadata:
+      name: fizzbuzz-reducer
+      labels:
+        tech: python
+        app: fizzbuzz
+        protocol: grpc
+        name: fizzbuzz-reducer
+        version: {{ .Values.reducer.tag }}
+    spec:
+      containers:
+      - name: fizzbuzz-reducer
+        imagePullPolicy: Always
+        image: matehat/fizzbuzz-reducer:{{ .Values.reducer.tag }}
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "150m"
+        ports:
+          - containerPort: 50051
+            name: grpc
+        env:
+          - name: REDUCER_SERVICE_HOST
+            value: 0.0.0.0
+          - name: REDUCER_SERVICE_PORT
+            value: "50051"
+          - name: FIZZ_SERVICE_HOST
+            value: fizzbuzz-fizz
+          - name: FIZZ_SERVICE_PORT
+            value: "50051"
+          - name: BUZZ_SERVICE_HOST
+            value: fizzbuzz-buzz
+          - name: BUZZ_SERVICE_PORT
+            value: "50051"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fizzbuzz-reducer
+  labels:
+    app: fizzbuzz
+spec:
+  ports:
+  - port: 50051
+    name: grpc
+  type: ClusterIP
+  selector:
+    name: fizzbuzz-reducer

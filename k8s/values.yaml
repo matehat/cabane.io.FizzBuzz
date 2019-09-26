@@ -1,0 +1,19 @@
+frontend:
+    replicas: 2
+    tag: v2
+
+echo:
+    replicas: 2
+    tag: v1
+
+reducer:
+    replicas: 2
+    tag: v1
+
+fizz:
+    replicas: 1
+    tag: v1
+
+buzz:
+    replicas: 1
+    tag: v1
