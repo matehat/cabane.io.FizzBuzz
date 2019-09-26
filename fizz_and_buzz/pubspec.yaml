@@ -1,0 +1,14 @@
+name: fizzbuzz_buzz
+description: Dart implementation of gRPC, a high performance, open-source universal RPC framework.
+
+version: 0.1.0
+
+author: Mathieu D'Amours <mathieu@braver.health>
+homepage: https://matehat.blog
+
+environment:
+  sdk: ">=2.2.0 <3.0.0"
+
+dependencies:
+  grpc: ^2.1.2
+  protobuf: ^0.14.3
