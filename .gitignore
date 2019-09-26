@@ -3,3 +3,4 @@ node_modules/
 frontend/deps/
 frontend/_build/
 .elixir_ls/
+/.vscode/settings.json
