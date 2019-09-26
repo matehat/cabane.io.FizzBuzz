@@ -34,13 +34,13 @@ spec:
               number: 4000
             host: fizzbuzz-frontend
             subset: v1
-          weight: 0
+          weight: 50
         - destination:
             port:
               number: 4000
             host: fizzbuzz-frontend
             subset: v2
-          weight: 100
+          weight: 50
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
