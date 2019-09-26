@@ -1,10 +1,12 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		"elixirLS.projectDir": "frontend"
-	}
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "elixirLS.projectDir": "frontend",
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "yapf"
+  }
 }
