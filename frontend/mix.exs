@@ -43,11 +43,15 @@ defmodule Frontend.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-
+      {:gen_stage, "~> 0.14.2"},
       {:grpc, github: "elixir-grpc/grpc"},
       {:protobuf, "~> 0.5.3"},
       {:google_protos, "~> 0.1"},
-      {:cowboy, env: :prod, git: "https://github.com/elixir-grpc/cowboy.git", tag: "grpc-2.6.3", override: true},
+      {:cowboy,
+       env: :prod,
+       git: "https://github.com/elixir-grpc/cowboy.git",
+       tag: "grpc-2.6.3",
+       override: true}
     ]
   end
 

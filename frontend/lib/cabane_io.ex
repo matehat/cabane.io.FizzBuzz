@@ -19,4 +19,8 @@ defmodule Cabane.Io do
   defp service_addr(:echo) do
     service_addr("ECHO")
   end
+
+  defp service_addr(:reducer) do
+    service_addr("REDUCER")
+  end
 end
