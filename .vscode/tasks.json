@@ -1,0 +1,19 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "Apply new weights",
+      "command": "kubectl apply -f k8s/istio/gateway.yaml",
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "Start fizz-buzzing",
+      "command": "./query.sh",
+      "problemMatcher": []
+    }
+  ]
+}
