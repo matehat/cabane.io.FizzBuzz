@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "reducer"
+version = "0.1.0"
+description = ""
+authors = ["matehat <mathieu@braver.health>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+protobuf = "^3.9"
+grpclib = "^0.3.0"
+
+[tool.poetry.dev-dependencies]
+grpcio-tools = "^1.23"
+flake8 = "^3.7"
+yapf = "^0.28.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
